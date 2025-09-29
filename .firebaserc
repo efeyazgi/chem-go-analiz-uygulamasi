@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "chem-go-doe",
+    "analysing": "chem-go-doe"
+  },
+  "targets": {},
+  "etags": {}
+}
