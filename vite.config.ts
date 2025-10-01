@@ -14,7 +14,11 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
           charts: ['chart.js', 'react-chartjs-2']
-        }
+        },
+        // Cache busting with hash
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     }
   }
