@@ -11,12 +11,31 @@ import {
 } from 'chart.js'
 import { useEffect, useMemo, useState } from 'react'
 import { olsFit, crossValidation, type RegressionResult } from '../utils/regression'
+import { useAuth } from '../lib/auth'
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend)
 
 type Run = any
 
+const LABELS: Record<string, string> = {
+  vinegar_ml: 'Asetik Asit (mL)',
+  vinegar_acetic_pct: 'Asetik Asit (%)',
+  bicarb_g: 'Sodyumbikarbonat (g)',
+  temperature_C: 'Sıcaklık (°C)',
+  time_s: 'Süre (s)',
+  co2_volume_ml: 'CO₂ Hacmi (mL)',
+  distance_m: 'Mesafe (m)',
+  electrolyte_conc_M: 'Konsantrasyon (M)',
+  electrode_area_cm2: 'Elektrot Alanı (cm²)',
+  current_A: 'Akım (A)',
+  voltage_V: 'Gerilim (V)',
+  power_W: 'Güç (W)',
+  energy_Wh: 'Enerji (Wh)',
+  vehicleMass_kg: 'Araç Kütlesi (kg)',
+}
+
 export default function Analysis() {
+  const { user } = useAuth()
   const [runs, setRuns] = useState<Run[]>([])
   const [feature, setFeature] = useState<string>('vinegar_ml')
   const [target, setTarget] = useState<string>('distance_m')
@@ -116,6 +135,29 @@ export default function Analysis() {
   
   const { coef, predict, rSquared, rmse, residuals, predictions, xs, ys, lineX, lineY, cvResults, n } = regressionData
 
+  // Admin yetkisi kontrolü
+  if (!user?.isAdmin) {
+    return (
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: 20, textAlign: 'center' }}>
+        <div style={{
+          background: '#fef3c7',
+          border: '1px solid #f59e0b',
+          borderRadius: 16,
+          padding: 40,
+          textAlign: 'center',
+          color: '#92400e'
+        }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+          <h2 style={{ margin: '0 0 16px 0', color: '#92400e' }}>Yetkiniz Yok</h2>
+          <p style={{ margin: 0, fontSize: 16 }}>
+            Bu sayfaya erişmek için admin yetkisine sahip olmanız gerekiyor.
+            <br />Yetki için lütfen yöneticinize başvurun.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   if (isLoading) {
     return (
       <div style={{ maxWidth: 800, margin: '0 auto', padding: 20, textAlign: 'center' }}>
@@ -204,8 +246,11 @@ export default function Analysis() {
                     background: 'white'
                   }}
                 >
-                  <option value="vinegar_ml">Sirke (mL)</option>
-                  <option value="bicarb_g">Karbonat (g)</option>
+                  <option value="vinegar_ml">Asetik Asit (mL)</option>
+                  <option value="vinegar_acetic_pct">Asetik Asit (%)</option>
+                  <option value="bicarb_g">Sodyumbikarbonat (g)</option>
+                  <option value="temperature_C">Sıcaklık (°C)</option>
+                  <option value="time_s">Süre (s)</option>
                   <option value="co2_volume_ml">CO₂ Hacmi (mL)</option>
                   <option value="electrolyte_conc_M">Konsantrasyon (M)</option>
                   <option value="electrode_area_cm2">Elektrot Alanı (cm²)</option>
@@ -213,8 +258,6 @@ export default function Analysis() {
                   <option value="voltage_V">Gerilim (V)</option>
                   <option value="power_W">Güç (W)</option>
                   <option value="vehicleMass_kg">Araç Kütlesi (kg)</option>
-                  <option value="time_s">Süre (s)</option>
-                  <option value="temperature_C">Sıcaklık (°C)</option>
                 </select>
               </div>
               
@@ -361,7 +404,7 @@ export default function Analysis() {
                         type: 'linear', 
                         title: { 
                           display: true, 
-                          text: feature,
+                          text: LABELS[feature] || feature,
                           font: {
                             size: 14,
                             weight: 'bold',
@@ -375,7 +418,7 @@ export default function Analysis() {
                       y: { 
                         title: { 
                           display: true, 
-                          text: target,
+                          text: LABELS[target] || target,
                           font: {
                             size: 14,
                             weight: 'bold',

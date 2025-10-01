@@ -474,7 +474,7 @@ export default function ModernHistory() {
                     <div style={{ display: 'grid', gap: 4 }}>
                       {run.vinegar_ml && (
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ color: '#166534', fontSize: 11 }}>🥃 Sirke:</span>
+                          <span style={{ color: '#166534', fontSize: 11 }}>🥃 Asetik Asit:</span>
                           <span style={{ fontSize: 11, fontWeight: '500' }}>{Number(run.vinegar_ml).toFixed(1)} mL</span>
                         </div>
                       )}
@@ -784,7 +784,7 @@ export default function ModernHistory() {
                         color: '#374151',
                         fontSize: 13
                       }}>
-                        🥃 Sirke (mL)
+                        🥃 Asetik Asit (mL)
                       </label>
                       <input
                         type="number"

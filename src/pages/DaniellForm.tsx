@@ -5,20 +5,21 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { useState } from 'react'
 import { useAuth } from '../lib/auth'
+import { useLocation } from 'react-router-dom'
 
 const schema = z.object({
   date: z.string().min(1),
   weekTag: z.string().min(1),
-  vehicleMass_kg: z.coerce.number().positive(),
+  vehicleMass_kg: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   electrolyte_conc_M: z.coerce.number().min(0.1).max(2.0),
   electrode_area_cm2: z.coerce.number().min(1).max(25),
   solution_level_mm: z.coerce.number().min(1),
-  ocv_V: z.coerce.number().positive().optional(),
-  current_A: z.coerce.number().positive().optional(),
-  voltage_V: z.coerce.number().positive().optional(),
-  power_W: z.coerce.number().positive().optional(),
-  energy_Wh: z.coerce.number().positive().optional(),
-  distance_m: z.coerce.number().positive().optional(),
+  ocv_V: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
+  current_A: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
+  voltage_V: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
+  power_W: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
+  energy_Wh: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
+  distance_m: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   notes: z.string().optional(),
 })
 
@@ -26,10 +27,19 @@ type FormData = z.infer<typeof schema>
 
 export default function DaniellForm() {
   const { user } = useAuth()
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const num = (k: string, d?: number) => {
+    const v = params.get(k)
+    return v != null ? Number(v) : d
+  }
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       weekTag: isoWeekTag(new Date()),
+      electrolyte_conc_M: num('electrolyte_conc_M'),
+      electrode_area_cm2: num('electrode_area_cm2'),
+      solution_level_mm: num('solution_level_mm'),
     } as any,
   })
 
@@ -44,10 +54,16 @@ export default function DaniellForm() {
     
     try {
       console.log('Daniell pili verisi kaydediliyor:', data)
+      
+      // Firebase için undefined değerleri filtrele
+      const cleanedData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== undefined)
+      )
+      
       await addDoc(collection(db, 'runs'), {
         type: 'daniell',
         userId: auth.currentUser?.uid || null,
-        ...data,
+        ...cleanedData,
         createdAt: serverTimestamp(),
       })
       console.log('Daniell pili verisi başarıyla kaydedildi')
@@ -160,7 +176,7 @@ export default function DaniellForm() {
           </div>
           
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Araç Kütlesi (kg) *</label>
+            <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Araç Kütlesi (kg)</label>
             <input 
               type="number" 
               step="0.001" 

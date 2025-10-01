@@ -24,7 +24,7 @@ Modern ve kullanıcı dostu kimya deneyleri analiz platformu. React, TypeScript,
 
 ### 🧪 Deney Türleri
 1. **💨 Gaz Deneyleri**
-   - Sirke miktarı (mL)
+   - Asetik Asit miktarı (mL)
    - Asetik asit yüzdesi (%)
    - Karbonat miktarı (g)
    - Sıcaklık (°C)
@@ -46,6 +46,7 @@ Modern ve kullanıcı dostu kimya deneyleri analiz platformu. React, TypeScript,
 - **Cross-validation** ile model doğrulama
 - **R-squared, RMSE** gibi istatistiksel metrikler
 - **Tahmin modelleri** ile gelecek sonuçları öngörme
+- **Admin-only analiz sayfası** (Güvenlik kontrollü)
 
 ### 📁 Veri Yönetimi
 - **Excel/CSV dosya içe aktarma** (XLSX, Papa Parse)
@@ -61,6 +62,8 @@ Modern ve kullanıcı dostu kimya deneyleri analiz platformu. React, TypeScript,
 - **Hover efektleri** ve animasyonlar
 - **Toast bildirimleri**
 - **Loading spinner'ları**
+- **Gelişmiş form validasyonu** (Zod ile tip güvenli)
+- **Opsiyonel alan desteği** (Araç kütlesi, mesafe vb.)
 
 ## 🛠 Teknolojiler
 
@@ -144,11 +147,12 @@ Modern ve kullanıcı dostu kimya deneyleri analiz platformu. React, TypeScript,
 3. **Kaydet** butonuna tıklayın
 4. **Dashboard**'da sonuçları görün
 
-### Veri Analizi
-1. **Analiz** sayfasına gidin
-2. **Deney türünü** seçin
-3. **Grafikleri** ve istatistikleri inceleyin
-4. **PDF raporu** indirin
+### Veri Analizi (Admin Only)
+1. **Admin yetkisiyle giriş yapın**
+2. **Analiz** sayfasına gidin
+3. **Deney türünü** seçin
+4. **Grafikleri** ve istatistikleri inceleyin
+5. **PDF raporu** indirin
 
 ### Veri Yönetimi
 1. **Geçmiş** sayfasında tüm kayıtları görün
@@ -266,6 +270,18 @@ src/
 | 👤 Kullanıcı | ✅ | ✅ | ✅ | ❌ | ❌ |
 | 👁️ Görüntüleyici | ✅ | ❌ | ❌ | ❌ | ❌ |
 
+## 📢 Son Güncellemeler
+
+### v2.1.0 (Aralık 2024)
+- ✅ **Araç kütlesi alanı opsiyonel yapıldı**
+- ✅ **Mesafe alanı opsiyonel yapıldı**
+- ✅ **Elektriksel ölçümler tam opsiyonel**
+- ✅ **"Sirke" terimleri "Asetik Asit" olarak güncellendi**
+- ✅ **Daniell pili tepkime açıklamaları eklendi**
+- ✅ **Analiz sayfası admin-only yapıldı**
+- ✅ **Enerji ve güç kavramları açıklandı**
+- ✅ **Form validasyon sistemi iyileştirildi**
+
 ## 📈 Özellik Geliştirme Planı
 
 - [ ] **Real-time notifications** (Firebase Cloud Messaging)
@@ -274,6 +290,7 @@ src/
 - [ ] **Team collaboration** (Takım çalışması özellikleri)
 - [ ] **Mobile app** (React Native)
 - [ ] **API endpoints** (REST API)
+- [ ] **STP koşulları düzeltmeleri** (Gaz deneyleri için)
 
 ## 🤝 Katkıda Bulunma
 

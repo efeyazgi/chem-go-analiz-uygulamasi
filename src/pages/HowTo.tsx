@@ -18,6 +18,36 @@ export default function HowTo() {
         </p>
       </div>
 
+      {/* DOE Paneli Nasıl Kullanılır */}
+      <div style={{
+        background: '#ffffff',
+        borderRadius: 12,
+        padding: 24,
+        marginBottom: 24,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        border: '1px solid #e5e7eb'
+      }}>
+        <h2 style={{ margin: '0 0 20px 0', color: '#1f2937', display: 'flex', alignItems: 'center', gap: 8 }}>
+          🧪 DOE Paneli Nasıl Kullanılır?
+        </h2>
+        <ol style={{ margin: 0, paddingLeft: 20, color: '#374151', display: 'grid', gap: 10 }}>
+          <li>Menüden "DOE" sayfasına gidin ve deney tipini seçin (Gaz/Daniell).</li>
+          <li>Faktörleri ve 2/3 seviye değerlerini girin. Gerekirse "Faktör Ekle" ile yeni faktör tanımlayın.</li>
+          <li>Plan tablosunu (L9/L8/L18 vb. otomatik seçilir) inceleyin ve CSV indirin. Laboratuvarda koşu sırasını randomize edip her koşuyu 2 tekrar yapın.</li>
+          <li>Deney sonrası her koşudaki Y repliklerini (örn. mesafe) panelde girin ve S/N modunu seçin (genelde "Büyüdükçe-İyi").</li>
+          <li>Ana etki tablosundan en iyi seviye kombinasyonunu görüntüleyin. İsterseniz "En iyi kombinasyonu forma aktar" butonuyla ilgili forma otomatik doldurma yapın.</li>
+          <li>Pareto grafiğiyle faktörlerin göreli etkilerini görselleştirin. Ardından doğrulama koşusunu önerilen kombinasyonla 2–3 tekrar yapın.</li>
+        </ol>
+        <div style={{ marginTop: 12, padding: 12, background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: 8 }}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>İpuçları</div>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            <li>Gaz: Stoik oran φ = n_asetik/n_bikarbonat ≈ 1 civarı verimli. Aşırı dengesizlik verimi düşürebilir.</li>
+            <li>Daniell: Standard yük direnci ile test edin; power_W = V×I doğrulaması yapın.</li>
+            <li>Randomizasyon ve tekrar, S/N hesaplarının güvenilirliği için önemlidir.</li>
+          </ul>
+        </div>
+      </div>
+
       {/* Temel Kullanım */}
       <div style={{
         background: '#ffffff',
@@ -104,7 +134,58 @@ export default function HowTo() {
         </div>
       </div>
 
-      {/* Kullanıcı Rolleri */}
+      {/* Tepkime Denklemi */}
+      <div style={{
+        background: '#ffffff',
+        borderRadius: 12,
+        padding: 24,
+        marginBottom: 24,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        border: '1px solid #e5e7eb'
+      }}>
+        <h2 style={{ margin: '0 0 16px 0', color: '#1f2937' }}>⚗️ Gaz İtişi Tepkimesi</h2>
+        <div style={{
+          background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, fontFamily: 'monospace', fontSize: 14
+        }}>
+          CH3COOH  +  NaHCO3  →  CO2  +  H2O  +  CH3COONa
+        </div>
+        <div style={{ color: '#6b7280', fontSize: 14, marginTop: 8 }}>
+          Asetik asit ile sodyumbikarbonat 1:1 mol oranında tepkimeye girer. Üretilen CO₂ miktarı, sınırlayıcı reaktife göre belirlenir.
+        </div>
+      </div>
+
+      {/* Daniell Pili Tepkimesi */}
+      <div style={{
+        background: '#ffffff',
+        borderRadius: 12,
+        padding: 24,
+        marginBottom: 24,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        border: '1px solid #e5e7eb'
+      }}>
+        <h2 style={{ margin: '0 0 16px 0', color: '#1f2937' }}>⚡ Daniell Pili Tepkimeleri</h2>
+        <div style={{
+          background: '#f0f9ff', border: '1px solid #0ea5e9', borderRadius: 8, padding: 16, marginBottom: 12
+        }}>
+          <div style={{ fontWeight: 'bold', color: '#0c4a6e', marginBottom: 8 }}>Anot (Çinko Elektrodu):</div>
+          <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#0369a1', marginBottom: 8 }}>
+            Zn(s) → Zn²⁺(aq) + 2e⁻
+          </div>
+          <div style={{ fontWeight: 'bold', color: '#0c4a6e', marginBottom: 8 }}>Katot (Bakır Elektrodu):</div>
+          <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#0369a1', marginBottom: 8 }}>
+            Cu²⁺(aq) + 2e⁻ → Cu(s)
+          </div>
+          <div style={{ fontWeight: 'bold', color: '#0c4a6e', marginBottom: 8 }}>Toplam Hücre Tepkimesi:</div>
+          <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#0369a1' }}>
+            Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)
+          </div>
+        </div>
+        <div style={{ color: '#6b7280', fontSize: 14 }}>
+          Daniell pili, çinko ve bakır elektrotları arasındaki redoks tepkimesiyle elektrik üretir. Standart koşullarda yaklaşık 1.1V gerilim sağlar. Elektrolit derişimi ve elektrot yüzey alanı pilin performansını doğrudan etkiler.
+        </div>
+      </div>
+
+      {/* Teknik Detaylar */}
       <div style={{
         background: '#ffffff',
         borderRadius: 12,
@@ -114,7 +195,7 @@ export default function HowTo() {
         border: '1px solid #e5e7eb'
       }}>
         <h2 style={{ margin: '0 0 20px 0', color: '#1f2937', display: 'flex', alignItems: 'center', gap: 8 }}>
-          👥 Kullanıcı Rolleri ve Yetkileri
+          💡 İpuçları ve Önemli Notlar
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
           {
@@ -206,8 +287,8 @@ export default function HowTo() {
           {[
             {
               icon: '🌶️',
-              title: 'Sirke Konsantrasyonu',
-              desc: 'Sirke için asetik asit varsayılanı %5’tir. Farklı bir değer kullanıyorsanız formda güncelleyin.'
+              title: 'Asetik Asit Konsantrasyonu',
+              desc: 'Asetik asidin varsayılanı %5’tir. Farklı bir değer kullanıyorsanız formda güncelleyin.'
             },
             {
               icon: '🌡️',
@@ -243,6 +324,16 @@ export default function HowTo() {
               icon: '👥',
               title: 'Kullanıcı Yönetimi',
               desc: 'Admin kullanıcılar navbar\'dan "Kullanıcılar" sayfasına giderek diğer kullanıcıların rollerini yönetebilir.'
+            },
+            {
+              icon: '⚡',
+              title: 'Elektriksel Güç (W)',
+              desc: 'Güç = Gerilim × Akım (P = V × I) formülüyle hesaplanır. Pilin anlık performansını gösterir ve watt (W) cinsinden ölçülür.'
+            },
+            {
+              icon: '🔋',
+              title: 'Elektriksel Enerji (Wh)',
+              desc: 'Enerji = Güç × Zaman (E = P × t) ile hesaplanır. Pilin toplam depoladığı enerjiyi watt-saat (Wh) cinsinden ifade eder. 1 Wh = 3600 J’dir.'
             }
           ].map((tip, i) => (
             <div key={i} style={{

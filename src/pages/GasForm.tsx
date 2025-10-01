@@ -5,18 +5,19 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { useState } from 'react'
 import { useAuth } from '../lib/auth'
+import { useLocation } from 'react-router-dom'
 
 const schema = z.object({
   date: z.string().min(1),
   weekTag: z.string().min(1),
-  vehicleMass_kg: z.coerce.number().positive(),
+  vehicleMass_kg: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   vinegar_ml: z.coerce.number().positive(),
   vinegar_acetic_pct: z.coerce.number().positive().max(100).default(5),
   bicarb_g: z.coerce.number().positive(),
   temperature_C: z.coerce.number(),
   time_s: z.coerce.number().positive(),
-  co2_volume_ml: z.coerce.number().positive().optional(),
-  distance_m: z.coerce.number().positive().optional(),
+  co2_volume_ml: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
+  distance_m: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   notes: z.string().optional(),
 })
 
@@ -24,12 +25,21 @@ type FormData = z.infer<typeof schema>
 
 export default function GasForm() {
   const { user } = useAuth()
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const num = (k: string, d?: number) => {
+    const v = params.get(k)
+    return v != null ? Number(v) : d
+  }
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       weekTag: isoWeekTag(new Date()),
-      vinegar_acetic_pct: 5,
-      temperature_C: 20,
+      vinegar_acetic_pct: num('vinegar_acetic_pct', 5),
+      temperature_C: num('temperature_C', 20),
+      vinegar_ml: num('vinegar_ml'),
+      bicarb_g: num('bicarb_g'),
+      time_s: num('time_s'),
     }
   })
 
@@ -48,10 +58,15 @@ export default function GasForm() {
       console.log('User email:', auth.currentUser?.email)
       console.log('Veri kaydediliyor:', data)
       
+      // Firebase için undefined değerleri filtrele
+      const cleanedData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== undefined)
+      )
+      
       const docData = {
         type: 'gas',
         userId: auth.currentUser?.uid || null,
-        ...data,
+        ...cleanedData,
         createdAt: serverTimestamp(),
       }
       console.log('Document data:', docData)
@@ -166,7 +181,7 @@ export default function GasForm() {
         </div>
         
         <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Araç Kütlesi (kg) *</label>
+          <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Araç Kütlesi (kg)</label>
           <input 
             type="number" 
             step="0.001" 
@@ -181,12 +196,12 @@ export default function GasForm() {
             disabled={isLoading}
             placeholder="0.500"
           />
-          {errors.vehicleMass_kg && <span style={{ color: '#f56565', fontSize: 12 }}>Pozitif bir değer giriniz</span>}
+            {errors.vehicleMass_kg && <span style={{ color: '#f56565', fontSize: 12 }}>Pozitif bir değer giriniz</span>}
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Sirke (mL) *</label>
+            <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Asetik Asit (mL) *</label>
             <input 
               type="number" 
               step="0.1" 
@@ -226,7 +241,7 @@ export default function GasForm() {
         
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Karbonat (g) *</label>
+            <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#374151' }}>Sodyumbikarbonat (g) *</label>
             <input 
               type="number" 
               step="0.01" 

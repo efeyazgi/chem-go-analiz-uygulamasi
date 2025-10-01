@@ -4,6 +4,22 @@ import { useEffect, useMemo, useState } from 'react'
 import { olsFit, type RegressionResult } from '../utils/regression'
 import { useForm } from 'react-hook-form'
 
+const LABELS: Record<string, string> = {
+  vinegar_ml: 'Asetik Asit (mL)',
+  vinegar_acetic_pct: 'Asetik Asit (%)',
+  bicarb_g: 'Sodyumbikarbonat (g)',
+  temperature_C: 'Sıcaklık (°C)',
+  time_s: 'Süre (s)',
+  co2_volume_ml: 'CO₂ Hacmi (mL)',
+  distance_m: 'Mesafe (m)',
+  electrolyte_conc_M: 'Konsantrasyon (M)',
+  electrode_area_cm2: 'Elektrot Alanı (cm²)',
+  current_A: 'Akım (A)',
+  voltage_V: 'Gerilim (V)',
+  power_W: 'Güç (W)',
+  energy_Wh: 'Enerji (Wh)',
+}
+
 type Run = any
 
 export default function Prediction() {
@@ -12,6 +28,11 @@ export default function Prediction() {
   const [error, setError] = useState('')
   const [selectedModel, setSelectedModel] = useState<'gas' | 'daniell'>('gas')
   const [predictionResult, setPredictionResult] = useState<number | null>(null)
+
+  // Dinamik özellik seçimi
+  const gasCandidates = ['vinegar_ml','vinegar_acetic_pct','bicarb_g','temperature_C','time_s'] as const
+  const daniellCandidates = ['electrolyte_conc_M','electrode_area_cm2','current_A','voltage_V'] as const
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([...gasCandidates])
   
   const { register, handleSubmit, watch, formState: { errors } } = useForm()
 
@@ -37,61 +58,37 @@ export default function Prediction() {
     load()
   }, [])
 
-  // Veri tipine göre filtreleme ve model eğitimi
+  // Model veri hazırlama (seçilen özelliklere göre)
   const modelData = useMemo(() => {
     if (!runs || runs.length === 0) return null
-    
+
+    // Adayları modele göre güncelle
+    const candidates = selectedModel === 'gas' ? gasCandidates : daniellCandidates
+    const features = selectedFeatures.filter(f => (candidates as readonly string[]).includes(f))
+    if (features.length === 0) return null
+
     const filteredData = runs.filter(r => r.type === selectedModel)
     if (filteredData.length < 3) return null
-    
-    // Gas modeli için özellikler
-    if (selectedModel === 'gas') {
-      const gasFeatures = ['vinegar_ml', 'bicarb_g', 'temperature_C', 'time_s']
-      const validData = filteredData.filter(r => 
-        gasFeatures.every(f => r[f] != null && !isNaN(Number(r[f]))) &&
-        r.distance_m != null && !isNaN(Number(r.distance_m))
-      )
-      
-      if (validData.length < 3) return null
-      
-      const X = validData.map(r => gasFeatures.map(f => Number(r[f])))
-      const y = validData.map(r => Number(r.distance_m))
-      
-      const model = olsFit(X, y)
-      return {
-        model,
-        features: gasFeatures,
-        featureLabels: ['Sirke (mL)', 'Karbonat (g)', 'Sıcaklık (°C)', 'Süre (s)'],
-        target: 'distance_m',
-        targetLabel: 'Mesafe (m)',
-        dataCount: validData.length
-      }
+
+    const validData = filteredData.filter(r =>
+      features.every(f => r[f] != null && !isNaN(Number(r[f]))) &&
+      r.distance_m != null && !isNaN(Number(r.distance_m))
+    )
+    if (validData.length < 3) return null
+
+    const X = validData.map(r => features.map(f => Number(r[f])))
+    const y = validData.map(r => Number(r.distance_m))
+    const model = olsFit(X, y)
+
+    return {
+      model,
+      features,
+      featureLabels: features.map(f => LABELS[f] || f),
+      target: 'distance_m',
+      targetLabel: 'Mesafe (m)',
+      dataCount: validData.length,
     }
-    
-    // Daniell modeli için özellikler  
-    else {
-      const daniellFeatures = ['electrolyte_conc_M', 'electrode_area_cm2', 'current_A']
-      const validData = filteredData.filter(r => 
-        daniellFeatures.every(f => r[f] != null && !isNaN(Number(r[f]))) &&
-        r.distance_m != null && !isNaN(Number(r.distance_m))
-      )
-      
-      if (validData.length < 3) return null
-      
-      const X = validData.map(r => daniellFeatures.map(f => Number(r[f])))
-      const y = validData.map(r => Number(r.distance_m))
-      
-      const model = olsFit(X, y)
-      return {
-        model,
-        features: daniellFeatures,
-        featureLabels: ['Elektrolit Derişimi (M)', 'Elektrot Alanı (cm²)', 'Akım (A)'],
-        target: 'distance_m',
-        targetLabel: 'Mesafe (m)',
-        dataCount: validData.length
-      }
-    }
-  }, [runs, selectedModel])
+  }, [runs, selectedModel, selectedFeatures])
 
   const onPredict = (data: any) => {
     if (!modelData) return
@@ -157,16 +154,19 @@ export default function Prediction() {
         border: '1px solid #e5e7eb'
       }}>
         <h3 style={{ margin: '0 0 16px 0', color: '#1f2937', display: 'flex', alignItems: 'center', gap: 8 }}>
-          🎯 Model Seçimi
+          🎯 Model ve Özellik Seçimi
         </h3>
-        <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
             <input 
               type="radio" 
               name="model" 
               value="gas" 
               checked={selectedModel === 'gas'}
-              onChange={(e) => setSelectedModel('gas')}
+              onChange={(e) => {
+                setSelectedModel('gas')
+                setSelectedFeatures([...gasCandidates])
+              }}
             />
             <span>💨 Gaz Deneyi Modeli</span>
           </label>
@@ -176,10 +176,31 @@ export default function Prediction() {
               name="model" 
               value="daniell" 
               checked={selectedModel === 'daniell'}
-              onChange={(e) => setSelectedModel('daniell')}
+              onChange={(e) => {
+                setSelectedModel('daniell')
+                setSelectedFeatures([...daniellCandidates])
+              }}
             />
             <span>⚡ Daniell Pili Modeli</span>
           </label>
+        </div>
+        
+        <div style={{ marginTop: 12 }}>
+          <div style={{ fontWeight: 600, color: '#374151', marginBottom: 8 }}>Özellikler (X)</div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {(selectedModel === 'gas' ? gasCandidates : daniellCandidates).map((f) => (
+              <label key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, border: '1px solid #e5e7eb', padding: '6px 10px', borderRadius: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={selectedFeatures.includes(f)}
+                  onChange={(e) => {
+                    setSelectedFeatures(prev => e.target.checked ? [...prev, f] : prev.filter(x => x !== f))
+                  }}
+                />
+                <span>{LABELS[f] || f}</span>
+              </label>
+            ))}
+          </div>
         </div>
       </div>
 

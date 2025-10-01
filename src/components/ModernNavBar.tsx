@@ -13,7 +13,7 @@ export function ModernNavBar() {
     { path: '/gas', label: '💨 Gaz Deneyi', icon: '💨' },
     { path: '/daniell', label: '⚡ Daniell Pili', icon: '⚡' },
     { path: '/import', label: '📁 İçe Aktar', icon: '📁' },
-    { path: '/analysis', label: '📊 Analiz', icon: '📊' },
+    { path: '/doe', label: '🧪 DOE', icon: '🧪' },
     { path: '/prediction', label: '🔮 Tahmin', icon: '🔮' },
     { path: '/history', label: '📋 Geçmiş', icon: '📋' },
     { path: '/data-management', label: '🗏️ Veri Yönetimi', icon: '🗏️' },
@@ -21,6 +21,7 @@ export function ModernNavBar() {
   ]
   
   const adminNavLinks = [
+    { path: '/analysis', label: '📊 Analiz', icon: '📊' },
     { path: '/user-management', label: '👥 Kullanıcılar', icon: '👥' }
   ]
   

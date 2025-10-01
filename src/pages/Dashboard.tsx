@@ -3,6 +3,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { Link } from 'react-router-dom'
 import { MonthSelector } from '../components/MonthSelector'
+import { useAuth } from '../lib/auth'
 
 // Global dashboard refresh fonksiyonu
 let globalRefreshDashboard: (() => void) | null = null
@@ -14,6 +15,7 @@ export const refreshDashboard = () => {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth()
   const [weekTag, setWeekTag] = useState<string>(isoWeekTag(new Date()))
   const [gasCount, setGasCount] = useState<number>(0)
   const [daniellCount, setDaniellCount] = useState<number>(0)
@@ -204,7 +206,7 @@ export default function Dashboard() {
         }}>
           <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.2 }}>⚡</div>
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: 18, fontWeight: 'bold' }}>Daniell Pili</h3>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: 18, fontWeight: 'bold' }}>Daniell Pili Deneyi</h3>
             <div style={{ fontSize: 36, fontWeight: 'bold', marginBottom: 8 }}>
               {isLoading ? '...' : daniellCount}
             </div>
@@ -247,24 +249,26 @@ export default function Dashboard() {
               {isLoading ? '...' : gasCount + daniellCount}
             </div>
             <p style={{ margin: '0 0 16px 0', opacity: 0.9, fontSize: 14 }}>Bu hafta toplam deney sayısı</p>
-            <Link 
-              to="/analysis" 
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                background: 'rgba(255, 255, 255, 0.2)',
-                padding: '8px 16px',
-                borderRadius: 8,
-                color: 'white',
-                textDecoration: 'none',
-                fontSize: 14,
-                fontWeight: 'bold',
-                backdropFilter: 'blur(10px)'
-              }}
-            >
-              🔍 Analiz Et
-            </Link>
+            {user?.isAdmin && (
+              <Link 
+                to="/analysis" 
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  color: 'white',
+                  textDecoration: 'none',
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                🔍 Analiz Et
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -281,125 +285,16 @@ export default function Dashboard() {
           ⚡ Hızlı Erişim
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-          <Link 
-            to="/import" 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: 16,
-              background: '#f8fafc',
-              border: '2px solid #e2e8f0',
-              borderRadius: 8,
-              textDecoration: 'none',
-              color: '#1f2937',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#e2e8f0'
-              e.target.style.transform = 'translateY(-2px)'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#f8fafc'
-              e.target.style.transform = 'translateY(0)'
-            }}
-          >
-            <div style={{ fontSize: 24 }}>📁</div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>Veri İçe Aktar</div>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>Excel/CSV dosyası yükle</div>
-            </div>
-          </Link>
-          
-          <Link 
-            to="/analysis" 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: 16,
-              background: '#f8fafc',
-              border: '2px solid #e2e8f0',
-              borderRadius: 8,
-              textDecoration: 'none',
-              color: '#1f2937',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#e2e8f0'
-              e.target.style.transform = 'translateY(-2px)'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#f8fafc'
-              e.target.style.transform = 'translateY(0)'
-            }}
-          >
-            <div style={{ fontSize: 24 }}>📊</div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>Veri Analizi</div>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>Grafikler ve istatistikler</div>
-            </div>
-          </Link>
-          
-          <Link 
-            to="/data-management" 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: 16,
-              background: '#f8fafc',
-              border: '2px solid #e2e8f0',
-              borderRadius: 8,
-              textDecoration: 'none',
-              color: '#1f2937',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#e2e8f0'
-              e.target.style.transform = 'translateY(-2px)'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#f8fafc'
-              e.target.style.transform = 'translateY(0)'
-            }}
-          >
-            <div style={{ fontSize: 24 }}>🗂️</div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>Veri Yönetimi</div>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>Kayıtları görüntüle ve sil</div>
-            </div>
-          </Link>
-          
-          <Link 
-            to="/howto" 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: 16,
-              background: '#f8fafc',
-              border: '2px solid #e2e8f0',
-              borderRadius: 8,
-              textDecoration: 'none',
-              color: '#1f2937',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#e2e8f0'
-              e.target.style.transform = 'translateY(-2px)'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#f8fafc'
-              e.target.style.transform = 'translateY(0)'
-            }}
-          >
-            <div style={{ fontSize: 24 }}>❓</div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>Yardım</div>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>Kullanım kılavuzu</div>
-            </div>
-          </Link>
+          <QuickLink to="/gas" emoji="💨" title="Gaz Deneyi" subtitle="Yeni kayıt gir" />
+          <QuickLink to="/daniell" emoji="⚡" title="Daniell Pili Deneyi" subtitle="Yeni kayıt gir" />
+          <QuickLink to="/doe" emoji="🧪" title="DOE Paneli" subtitle="Plan oluştur" />
+          <QuickLink to="/prediction" emoji="🔮" title="Tahmin" subtitle="Model tabanlı" />
+          <QuickLink to="/history" emoji="📋" title="Geçmiş" subtitle="Kayıt listesi" />
+          <QuickLink to="/import" emoji="📁" title="Veri İçe Aktar" subtitle="Excel/CSV" />
+          <QuickLink to="/analysis" emoji="📊" title="Veri Analizi" subtitle="Grafikler" adminOnly />
+          <QuickLink to="/data-management" emoji="🗂️" title="Veri Yönetimi" subtitle="Kayıt işlemleri" />
+          <QuickLink to="/howto" emoji="❓" title="Yardım" subtitle="Kılavuz" />
+          <QuickLink to="/user-management" emoji="👥" title="Kullanıcılar" subtitle="Rol yönetimi" adminOnly />
         </div>
       </div>
       
@@ -428,6 +323,35 @@ export default function Dashboard() {
         </div>
       )}
     </div>
+  )
+}
+
+function QuickLink({ to, emoji, title, subtitle, adminOnly }: { to: string, emoji: string, title: string, subtitle: string, adminOnly?: boolean }) {
+  const { user } = useAuth()
+  if (adminOnly && !user?.isAdmin) return null
+  return (
+    <Link 
+      to={to}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 12, padding: 16,
+        background: '#f8fafc', border: '2px solid #e2e8f0', borderRadius: 8,
+        textDecoration: 'none', color: '#1f2937', transition: 'all 0.2s ease'
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.background = '#e2e8f0'
+        ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.background = '#f8fafc'
+        ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
+      }}
+    >
+      <div style={{ fontSize: 24 }}>{emoji}</div>
+      <div>
+        <div style={{ fontWeight: 'bold' }}>{title}</div>
+        <div style={{ fontSize: 12, color: '#6b7280' }}>{subtitle}</div>
+      </div>
+    </Link>
   )
 }
 

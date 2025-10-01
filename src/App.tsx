@@ -12,12 +12,20 @@ import ModernHistory from './pages/ModernHistory'
 import HowTo from './pages/HowTo'
 import DataManagement from './pages/DataManagement'
 import UserManagement from './pages/UserManagement'
+import DOE from './pages/DOE'
 import { useAuth } from './lib/auth'
 
 function Protected({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth()
   if (loading) return <div style={{ padding: 24 }}>Yükleniyor...</div>
   if (!user) return <Navigate to="/login" replace />
+  return children
+}
+
+function AdminOnly({ children }: { children: JSX.Element }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div style={{ padding: 24 }}>Yükleniyor...</div>
+  if (!user?.isAdmin) return <Navigate to="/" replace />
   return children
 }
 
@@ -32,7 +40,8 @@ function App() {
           <Route path="/gas" element={<Protected><GasForm /></Protected>} />
           <Route path="/daniell" element={<Protected><DaniellForm /></Protected>} />
           <Route path="/import" element={<Protected><ImportData /></Protected>} />
-          <Route path="/analysis" element={<Protected><Analysis /></Protected>} />
+          <Route path="/analysis" element={<Protected><AdminOnly><Analysis /></AdminOnly></Protected>} />
+          <Route path="/doe" element={<Protected><DOE /></Protected>} />
           <Route path="/prediction" element={<Protected><Prediction /></Protected>} />
           <Route path="/history" element={<Protected><ModernHistory /></Protected>} />
           <Route path="/data-management" element={<Protected><DataManagement /></Protected>} />

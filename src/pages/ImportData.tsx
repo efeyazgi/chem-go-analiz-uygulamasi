@@ -162,7 +162,7 @@ export default function ImportData() {
     const headDanEng = ['type','date','weekTag','vehicleMass_kg','electrolyte_conc_M','electrode_area_cm2','solution_level_mm','ocv_V','current_A','voltage_V','power_W','energy_Wh','distance_m','notes']
     
     // Türkçe açıklamalar
-    const headGasTr = ['Tip (gas)','Tarih (YYYY-MM-DD)','Hafta Etiketi (YYYY-WW)','Araç Kütlesi (kg)','Sirke (mL)','Asetik Asit (%)','Karbonat (g)','Sıcaklık (°C)','Süre (s)','CO2 Hacmi (mL)','Mesafe (m)','Notlar']
+    const headGasTr = ['Tip (gas)','Tarih (YYYY-MM-DD)','Hafta Etiketi (YYYY-WW)','Araç Kütlesi (kg)','Asetik Asit (mL)','Asetik Asit (%)','Sodyumbikarbonat (g)','Sıcaklık (°C)','Süre (s)','CO2 Hacmi (mL)','Mesafe (m)','Notlar']
     const headDanTr = ['Tip (daniell)','Tarih (YYYY-MM-DD)','Hafta Etiketi (YYYY-WW)','Araç Kütlesi (kg)','Elektrolit Derişimi (M)','Elektrot Alanı (cm²)','Çözelti Seviyesi (mm)','Boşta Gerilim (V)','Akım (A)','Gerilim (V)','Güç (W)','Enerji (Wh)','Mesafe (m)','Notlar']
     
     // Örnek veriler
