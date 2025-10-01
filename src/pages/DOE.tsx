@@ -8,13 +8,15 @@ import {
   BarElement,
   LineElement,
   PointElement,
+  LineController,
+  BarController,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, BarController, LineElement, LineController, PointElement, Title, Tooltip, Legend)
 
 export default function DOE() {
   const [experiment, setExperiment] = useState<'gas' | 'daniell'>('gas')
