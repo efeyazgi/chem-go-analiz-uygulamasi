@@ -101,6 +101,19 @@ export default function Dashboard() {
         textAlign: 'center',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
       }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          marginBottom: 16 
+        }}>
+          <div style={{ 
+            fontSize: '48px',
+            marginRight: '12px'
+          }}>
+            🧪
+          </div>
+        </div>
         <h1 style={{ margin: '0 0 16px 0', fontSize: 32, fontWeight: 'bold', textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
           🏠 Gösterge Paneli
         </h1>

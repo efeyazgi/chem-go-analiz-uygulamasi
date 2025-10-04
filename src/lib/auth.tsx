@@ -93,6 +93,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 // Rol yönetimi fonksiyonları
 export const updateUserRole = async (uid: string, newRole: UserRole) => {
   try {
+    // Ana admin koruması - hiç kimse ana admin'in yetkisini kaldıramaz
+    const userRoleDoc = await getDoc(doc(db, 'userRoles', uid))
+    if (userRoleDoc.exists()) {
+      const userData = userRoleDoc.data()
+      if (userData.email === 'efeyazgi@yahoo.com' && newRole !== 'admin') {
+        console.error('Ana admin yetkisi kaldırılamaz!')
+        return false
+      }
+    }
+
     await setDoc(doc(db, 'userRoles', uid), {
       role: newRole,
       updatedAt: new Date()

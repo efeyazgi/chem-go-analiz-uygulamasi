@@ -63,7 +63,7 @@ export function ModernNavBar() {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'space-between',
-        padding: '16px 32px', 
+        padding: window.innerWidth <= 768 ? '12px 16px' : '16px 32px', 
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
@@ -75,13 +75,24 @@ export function ModernNavBar() {
       }}>
         {/* Logo */}
         <div style={{ 
-          fontSize: '22px', 
+          display: 'flex',
+          alignItems: 'center',
+          gap: window.innerWidth <= 768 ? '8px' : '12px',
+          fontSize: window.innerWidth <= 768 ? '16px' : '22px', 
           fontWeight: '700', 
           color: '#ffffff',
           textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
           letterSpacing: '-0.5px'
         }}>
-          🧪 Chem GO Analiz Uygulaması
+          <div style={{ 
+            fontSize: window.innerWidth <= 768 ? '20px' : '28px',
+            fontWeight: 'bold',
+            color: '#ffffff',
+            textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+          }}>
+            🧪
+          </div>
+          {window.innerWidth <= 480 ? 'Chem GO' : 'Chem GO Analiz Uygulaması'}
         </div>
 
         {/* Desktop Navigation */}
@@ -89,7 +100,7 @@ export function ModernNavBar() {
           <>
             {/* Desktop Links - Hidden on mobile */}
             <div style={{ 
-              display: 'flex', 
+              display: window.innerWidth <= 768 ? 'none' : 'flex', 
               gap: 4,
               alignItems: 'center'
             }} className="desktop-nav">
@@ -118,7 +129,7 @@ export function ModernNavBar() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               style={{
-                display: 'none',
+                display: window.innerWidth <= 768 ? 'block' : 'none',
                 background: 'rgba(255, 255, 255, 0.2)',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
                 borderRadius: 8,
@@ -126,7 +137,9 @@ export function ModernNavBar() {
                 color: '#ffffff',
                 fontSize: '18px',
                 cursor: 'pointer',
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(10px)',
+                minWidth: '44px',
+                minHeight: '44px'
               }}
               className="mobile-menu-button"
             >
@@ -136,11 +149,15 @@ export function ModernNavBar() {
         )}
 
         {/* User Info & Logout */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: window.innerWidth <= 768 ? 8 : 16 
+        }}>
           {user ? (
             <>
               <div style={{ 
-                display: 'flex', 
+                display: window.innerWidth <= 480 ? 'none' : 'flex', 
                 alignItems: 'center', 
                 gap: 8,
                 background: 'rgba(255, 255, 255, 0.15)',
@@ -154,7 +171,7 @@ export function ModernNavBar() {
                   color: '#ffffff', 
                   fontSize: '13px', 
                   fontWeight: '500',
-                  maxWidth: '150px',
+                  maxWidth: window.innerWidth <= 768 ? '100px' : '150px',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
                 }}>
@@ -225,14 +242,17 @@ export function ModernNavBar() {
       {user && mobileMenuOpen && (
         <div style={{
           position: 'fixed',
-          top: '85px', // NavBar height offset
+          top: window.innerWidth <= 768 ? '70px' : '85px', // NavBar height offset
           left: 0,
           right: 0,
-          background: '#ffffff',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(10px)',
           borderBottom: '1px solid #e5e7eb',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
           zIndex: 999,
-          padding: '16px 32px'
+          padding: window.innerWidth <= 768 ? '16px' : '16px 32px',
+          maxHeight: 'calc(100vh - 70px)',
+          overflowY: 'auto'
         }} className="mobile-menu">
           {navLinks.map((link) => (
             <Link

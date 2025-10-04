@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom'
 
 const schema = z.object({
   date: z.string().min(1),
-  weekTag: z.string().min(1),
+  weekTag: z.string().min(1).max(50).transform(val => val.trim().replace(/[<>]/g, '')),
   vehicleMass_kg: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   electrolyte_conc_M: z.coerce.number().min(0.1).max(2.0),
   electrode_area_cm2: z.coerce.number().min(1).max(25),
@@ -20,7 +20,7 @@ const schema = z.object({
   power_W: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   energy_Wh: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   distance_m: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
-  notes: z.string().optional(),
+  notes: z.string().max(500).optional().transform(val => val ? val.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') : undefined),
 })
 
 type FormData = z.infer<typeof schema>
@@ -34,7 +34,7 @@ export default function DaniellForm() {
     return v != null ? Number(v) : d
   }
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       weekTag: isoWeekTag(new Date()),
       electrolyte_conc_M: num('electrolyte_conc_M'),

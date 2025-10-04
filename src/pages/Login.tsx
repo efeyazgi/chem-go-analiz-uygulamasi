@@ -60,7 +60,19 @@ export default function Login() {
       }}>
         {/* Logo ve Başlık */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: '48px', marginBottom: 16 }}>🧪</div>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            marginBottom: 16 
+          }}>
+            <div style={{ 
+              fontSize: '64px',
+              marginBottom: 16
+            }}>
+              🧪
+            </div>
+          </div>
           <h1 style={{ 
             margin: 0, 
             fontSize: 28, 

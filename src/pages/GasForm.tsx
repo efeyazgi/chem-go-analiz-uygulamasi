@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom'
 
 const schema = z.object({
   date: z.string().min(1),
-  weekTag: z.string().min(1),
+  weekTag: z.string().min(1).max(50).transform(val => val.trim().replace(/[<>]/g, '')),
   vehicleMass_kg: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   vinegar_ml: z.coerce.number().positive(),
   vinegar_acetic_pct: z.coerce.number().positive().max(100).default(5),
@@ -18,7 +18,7 @@ const schema = z.object({
   time_s: z.coerce.number().positive(),
   co2_volume_ml: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
   distance_m: z.union([z.string().length(0), z.coerce.number().positive()]).optional().transform(val => val === "" ? undefined : val),
-  notes: z.string().optional(),
+  notes: z.string().max(500).optional().transform(val => val ? val.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') : undefined),
 })
 
 type FormData = z.infer<typeof schema>

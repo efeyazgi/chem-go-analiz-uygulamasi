@@ -22,6 +22,12 @@ export default function ImportData() {
       const result = Papa.parse<Record<string, string>>(text, { header: true, skipEmptyLines: true })
       const rows = result.data
       
+      // Güvenlik kontrolü - maksimum 1000 satır
+      if (rows.length > 1000) {
+        setErrorMessage('Maksimum 1000 kayıt içe aktarılabilir. Dosyanızı bölerek tekrar deneyin.')
+        return
+      }
+      
       let gasCount = 0
       let daniellCount = 0
       let totalProcessed = 0
@@ -33,11 +39,21 @@ export default function ImportData() {
           continue
         }
         
+        // XSS koruması - string alanları temizle
+        const sanitizedRow = Object.fromEntries(
+          Object.entries(r).map(([key, value]) => [
+            key,
+            typeof value === 'string' 
+              ? value.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replace(/[<>]/g, '')
+              : value
+          ])
+        )
+        
         // WeekTag otomatik oluştur eğer yoksa
-        const processedData = {
+        const processedData: any = {
           type,
           userId: auth.currentUser?.uid || null,
-          ...coerceNumbers(r),
+          ...coerceNumbers(sanitizedRow),
           createdAt: serverTimestamp(),
         }
         
@@ -95,6 +111,12 @@ export default function ImportData() {
       const ws = wb.Sheets[wb.SheetNames[0]]
       const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws)
       
+      // Güvenlik kontrolü - maksimum 1000 satır
+      if (rows.length > 1000) {
+        setErrorMessage('Maksimum 1000 kayıt içe aktarılabilir. Dosyanızı bölerek tekrar deneyin.')
+        return
+      }
+      
       let gasCount = 0
       let daniellCount = 0
       let totalProcessed = 0
@@ -106,11 +128,21 @@ export default function ImportData() {
           continue
         }
         
+        // XSS koruması - string alanları temizle
+        const sanitizedRow = Object.fromEntries(
+          Object.entries(r).map(([key, value]) => [
+            key,
+            typeof value === 'string' 
+              ? value.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replace(/[<>]/g, '')
+              : value
+          ])
+        )
+        
         // WeekTag otomatik oluştur eğer yoksa
-        const processedData = {
+        const processedData: any = {
           type,
           userId: auth.currentUser?.uid || null,
-          ...coerceNumbers(r),
+          ...coerceNumbers(sanitizedRow),
           createdAt: serverTimestamp(),
         }
         

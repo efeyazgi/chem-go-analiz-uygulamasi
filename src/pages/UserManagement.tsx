@@ -42,8 +42,24 @@ export default function UserManagement() {
   }
 
   const handleRoleChange = async (uid: string, newRole: UserRole) => {
+    // Kendi yetkisini kaldırma kontrolü
     if (uid === user?.uid && newRole !== 'admin') {
       alert('Kendi admin yetkilerinizi kaldıramazsınız!')
+      return
+    }
+
+    // Admin kullanıcıları koruma - sadece ana admin (efeyazgi@yahoo.com) diğer adminlerin yetkisini kaldırabilir
+    const targetUser = users.find(u => u.uid === uid)
+    if (targetUser?.role === 'admin' && targetUser?.email !== 'efeyazgi@yahoo.com') {
+      if (user?.email !== 'efeyazgi@yahoo.com') {
+        alert('Sadece ana admin (efeyazgi@yahoo.com) diğer admin kullanıcıların yetkisini kaldırabilir!')
+        return
+      }
+    }
+
+    // Ana admin'i koruma - hiç kimse ana admin'in yetkisini kaldıramaz
+    if (targetUser?.email === 'efeyazgi@yahoo.com' && newRole !== 'admin') {
+      alert('Ana admin (efeyazgi@yahoo.com) kullanıcısının yetkisi kaldırılamaz!')
       return
     }
 
@@ -208,6 +224,20 @@ export default function UserManagement() {
         }}>
           📋 Rol Açıklamaları
         </h3>
+        <div style={{
+          background: '#fef3c7',
+          border: '1px solid #f59e0b',
+          borderRadius: 8,
+          padding: 12,
+          marginBottom: 12,
+          fontSize: 13,
+          color: '#92400e'
+        }}>
+          <div style={{ fontWeight: '600', marginBottom: 4 }}>🔒 Admin Koruması</div>
+          <div>• Ana admin (efeyazgi@yahoo.com) korunur ve yetkisi kaldırılamaz</div>
+          <div>• Diğer admin kullanıcıların yetkisi sadece ana admin tarafından kaldırılabilir</div>
+          <div>• Admin kullanıcılar kendi yetkilerini kaldıramaz</div>
+        </div>
         <div style={{ display: 'grid', gap: 8, fontSize: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ 
@@ -309,18 +339,46 @@ export default function UserManagement() {
                       📧 {userData.email || 'Email yok'}
                     </div>
                     
-                    {userData.uid === user.uid && (
-                      <div style={{
-                        background: '#dbeafe',
-                        color: '#1e40af',
-                        padding: '2px 8px',
-                        borderRadius: 12,
-                        fontSize: 11,
-                        fontWeight: '600'
-                      }}>
-                        Siz
-                      </div>
-                    )}
+                    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                      {userData.uid === user.uid && (
+                        <div style={{
+                          background: '#dbeafe',
+                          color: '#1e40af',
+                          padding: '2px 8px',
+                          borderRadius: 12,
+                          fontSize: 11,
+                          fontWeight: '600'
+                        }}>
+                          Siz
+                        </div>
+                      )}
+                      {userData.email === 'efeyazgi@yahoo.com' && (
+                        <div style={{
+                          background: '#fef3c7',
+                          color: '#92400e',
+                          padding: '2px 8px',
+                          borderRadius: 12,
+                          fontSize: 11,
+                          fontWeight: '600',
+                          border: '1px solid #f59e0b'
+                        }}>
+                          🔒 Ana Admin
+                        </div>
+                      )}
+                      {userData.role === 'admin' && userData.email !== 'efeyazgi@yahoo.com' && (
+                        <div style={{
+                          background: '#fef2f2',
+                          color: '#dc2626',
+                          padding: '2px 8px',
+                          borderRadius: 12,
+                          fontSize: 11,
+                          fontWeight: '600',
+                          border: '1px solid #ef4444'
+                        }}>
+                          ⚠️ Korumalı
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
                   <div style={{ display: 'grid', gap: 4, fontSize: 13, color: '#6b7280' }}>
@@ -354,7 +412,11 @@ export default function UserManagement() {
                     <select
                       value={userData.role}
                       onChange={(e) => handleRoleChange(userData.uid, e.target.value as UserRole)}
-                      disabled={updatingUser === userData.uid}
+                      disabled={
+                        updatingUser === userData.uid || 
+                        userData.email === 'efeyazgi@yahoo.com' ||
+                        (userData.role === 'admin' && userData.email !== 'efeyazgi@yahoo.com' && user?.email !== 'efeyazgi@yahoo.com')
+                      }
                       style={{
                         padding: '6px 8px',
                         border: `1px solid ${roleColors.border}`,
@@ -363,8 +425,16 @@ export default function UserManagement() {
                         background: roleColors.bg,
                         color: roleColors.text,
                         fontWeight: '600',
-                        cursor: updatingUser === userData.uid ? 'not-allowed' : 'pointer',
-                        opacity: updatingUser === userData.uid ? 0.6 : 1
+                        cursor: (
+                          updatingUser === userData.uid || 
+                          userData.email === 'efeyazgi@yahoo.com' ||
+                          (userData.role === 'admin' && userData.email !== 'efeyazgi@yahoo.com' && user?.email !== 'efeyazgi@yahoo.com')
+                        ) ? 'not-allowed' : 'pointer',
+                        opacity: (
+                          updatingUser === userData.uid || 
+                          userData.email === 'efeyazgi@yahoo.com' ||
+                          (userData.role === 'admin' && userData.email !== 'efeyazgi@yahoo.com' && user?.email !== 'efeyazgi@yahoo.com')
+                        ) ? 0.6 : 1
                       }}
                     >
                       <option value="admin">👑 Admin</option>
